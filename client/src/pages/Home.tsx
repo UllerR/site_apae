@@ -28,6 +28,7 @@ export default function Home() {
             <a href="#sobre" className="text-gray-700 hover:text-green-600 font-medium transition">Sobre</a>
             <a href="#servicos" className="text-gray-700 hover:text-green-600 font-medium transition">Serviços</a>
             <a href="#impacto" className="text-gray-700 hover:text-green-600 font-medium transition">Impacto</a>
+            <a href="/events" className="text-gray-700 hover:text-green-600 font-medium transition">Eventos</a>
             <a href="/donation" className="text-gray-700 hover:text-green-600 font-medium transition">Doação</a>
             <a href="#contato" className="text-gray-700 hover:text-green-600 font-medium transition">Contato</a>
           </nav>
