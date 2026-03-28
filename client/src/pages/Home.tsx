@@ -43,11 +43,11 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent flex items-center">
-            <div className="container mx-auto px-4">
-              <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 max-w-2xl">
+            <div className="container mx-auto px-4 pt-20 md:pt-0">
+              <h2 className="text-2xl md:text-6xl font-bold text-white mb-4 max-w-2xl">
                 Transformando Vidas Através da Inclusão
               </h2>
-              <p className="text-sm md:text-xl text-white/90 mb-8 max-w-xl">
+              <p className="text-xs md:text-xl text-white/90 mb-8 max-w-xl">
                 Há mais de 50 anos, a APAE de Itajaí trabalha com dedicação e amor para oferecer educação especializada e atendimento integral.
               </p>
               <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
