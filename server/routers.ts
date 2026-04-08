@@ -2,6 +2,8 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { createContact } from "./db";
+import { z } from "zod";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -17,12 +19,37 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  contacts: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          email: z.string().email(),
+          phone: z.string().optional(),
+          subject: z.string().min(1),
+          message: z.string().min(10),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          await createContact({
+            name: input.name,
+            email: input.email,
+            phone: input.phone || null,
+            subject: input.subject,
+            message: input.message,
+            status: "novo",
+          });
+          return {
+            success: true,
+            message: "Mensagem enviada com sucesso! Entraremos em contato em breve.",
+          };
+        } catch (error) {
+          console.error("Erro ao criar contato:", error);
+          throw new Error("Erro ao enviar mensagem. Tente novamente.");
+        }
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
