@@ -239,12 +239,16 @@ export default function Home() {
               Você pode contribuir para transformar vidas. Seja através de doações, voluntariado ou parcerias, sua ajuda faz a diferença.
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <Button className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-bold">
-                Fazer Doação
-              </Button>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-bold">
-                Ser Voluntário
-              </Button>
+              <a href="/donate">
+                <Button className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-bold">
+                  Fazer Doação
+                </Button>
+              </a>
+              <a href="/volunteer">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-bold">
+                  Ser Voluntário
+                </Button>
+              </a>
             </div>
           </div>
         </section>
