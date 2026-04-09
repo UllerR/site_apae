@@ -55,6 +55,17 @@ export default function Partnerships() {
     }
   };
 
+  const scrollToForm = (subject: string) => {
+    setFormData(prev => ({
+      ...prev,
+      subject: subject,
+    }));
+    const formElement = document.getElementById("contact-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header/Navigation */}
@@ -89,10 +100,16 @@ export default function Partnerships() {
               Você pode contribuir para transformar vidas. Seja através de doações, voluntariado ou parcerias, sua ajuda faz a diferença.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-semibold">
+              <Button 
+                onClick={() => scrollToForm("Doação")}
+                className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-semibold"
+              >
                 Fazer Doação
               </Button>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-semibold">
+              <Button 
+                onClick={() => scrollToForm("Voluntariado")}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-semibold"
+              >
                 Ser Voluntário
               </Button>
             </div>
@@ -257,7 +274,7 @@ export default function Partnerships() {
         </section>
 
         {/* Formulário de Contato */}
-        <section className="py-16 md:py-24 px-4 bg-gray-50">
+        <section className="py-16 md:py-24 px-4 bg-gray-50" id="contact-form">
           <div className="container mx-auto max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
               Entre em Contato
