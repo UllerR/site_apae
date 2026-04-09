@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, Users, Briefcase, HandshakeIcon, Target, Star } from "lucide-react";
@@ -115,18 +116,20 @@ export default function Partnerships() {
               Você pode contribuir para transformar vidas. Seja através de doações, voluntariado ou parcerias, sua ajuda faz a diferença.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={() => scrollToForm("Doação")}
-                className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-semibold"
-              >
-                Fazer Doação
-              </Button>
-              <Button 
-                onClick={() => scrollToForm("Voluntariado")}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-semibold"
-              >
-                Ser Voluntário
-              </Button>
+              <a href="/donate">
+                <Button 
+                  className="bg-white text-green-600 hover:bg-gray-100 px-8 py-6 text-lg font-semibold"
+                >
+                  Fazer Doação
+                </Button>
+              </a>
+              <a href="/volunteer">
+                <Button 
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg font-semibold"
+                >
+                  Ser Voluntário
+                </Button>
+              </a>
             </div>
           </div>
         </section>
