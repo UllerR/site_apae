@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { createContact } from "./db";
 import { z } from "zod";
+import { notifyOwner } from "./_core/notification";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -40,6 +41,15 @@ export const appRouter = router({
             message: input.message,
             status: "novo",
           });
+
+          // Enviar notificação para o proprietário da APAE
+          const emailContent = `Novo contato de parceiro recebido!\n\nNome: ${input.name}\nEmail: ${input.email}\nTelefone: ${input.phone || "Não informado"}\nTipo de Interesse: ${input.subject}\n\nMensagem:\n${input.message}`;
+
+          await notifyOwner({
+            title: `Novo Parceiro: ${input.subject}`,
+            content: emailContent,
+          });
+
           return {
             success: true,
             message: "Mensagem enviada com sucesso! Entraremos em contato em breve.",
