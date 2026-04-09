@@ -16,6 +16,8 @@ export default function Partnerships() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] = useState<{name: string; email: string; subject: string} | null>(null);
   const createContactMutation = trpc.contacts.create.useMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -39,7 +41,15 @@ export default function Partnerships() {
         message: formData.message,
       });
 
-      toast.success("Mensagem enviada com sucesso! Entraremos em contato em breve.");
+      // Mostrar confirmação
+      setConfirmationData({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+      });
+      setShowConfirmation(true);
+
+      // Limpar formulário
       setFormData({
         name: "",
         email: "",
@@ -47,6 +57,11 @@ export default function Partnerships() {
         subject: "",
         message: "",
       });
+
+      // Fechar confirmação após 5 segundos
+      setTimeout(() => {
+        setShowConfirmation(false);
+      }, 5000);
     } catch (error) {
       toast.error("Erro ao enviar mensagem. Tente novamente.");
       console.error(error);
@@ -272,6 +287,46 @@ export default function Partnerships() {
             </div>
           </div>
         </section>
+
+        {/* Mensagem de Confirmação */}
+        {showConfirmation && confirmationData && (
+          <section className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-md bg-white">
+              <div className="p-8 text-center">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  Mensagem Enviada!
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Obrigado, <strong>{confirmationData.name}</strong>! Recebemos sua mensagem com sucesso.
+                </p>
+                <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                  <p className="text-sm text-gray-600 mb-2">
+                    <span className="font-semibold">Email:</span> {confirmationData.email}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Tipo de Interesse:</span> {confirmationData.subject}
+                  </p>
+                </div>
+                <p className="text-gray-600 text-sm mb-6">
+                  Nossa equipe analisará sua solicitação e entrará em contato em breve.
+                </p>
+                <Button
+                  onClick={() => setShowConfirmation(false)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 font-semibold"
+                >
+                  Fechar
+                </Button>
+              </div>
+            </Card>
+          </section>
+        )}
 
         {/* Formulário de Contato */}
         <section className="py-16 md:py-24 px-4 bg-gray-50" id="contact-form">
