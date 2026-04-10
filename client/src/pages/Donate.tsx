@@ -7,13 +7,19 @@ import { useState } from "react";
 export default function Donate() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
 
   const donationAmounts = [
-    { value: 50, label: "R$ 50" },
-    { value: 100, label: "R$ 100" },
-    { value: 200, label: "R$ 200" },
-    { value: 500, label: "R$ 500" },
+    { value: 25, label: "R$ 25", description: "Pequeno gesto" },
+    { value: 50, label: "R$ 50", description: "Muito obrigado" },
+    { value: 100, label: "R$ 100", description: "Generoso" },
+    { value: 250, label: "R$ 250", description: "Herói" },
+    { value: 500, label: "R$ 500", description: "Transformador" },
+    { value: 1000, label: "R$ 1.000", description: "Extraordinário" },
   ];
+
+  const finalAmount = selectedAmount || (customAmount ? parseInt(customAmount) : null);
 
   const impactExamples = [
     {
@@ -80,28 +86,77 @@ export default function Donate() {
         {/* Valores de Doação */}
         <section className="py-16 md:py-24 px-4 bg-gray-50">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-800">
               Escolha um Valor para Doar
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
+            <p className="text-center text-gray-600 mb-12 text-lg">
+              Selecione um valor predefinido ou digite um valor customizado
+            </p>
+            
+            {/* Valores Predefinidos */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 max-w-5xl mx-auto mb-8">
               {donationAmounts.map((amount) => (
                 <button
                   key={amount.value}
-                  onClick={() => setSelectedAmount(amount.value)}
-                  className={`p-6 rounded-lg font-bold text-lg transition transform hover:scale-105 ${
+                  onClick={() => {
+                    setSelectedAmount(amount.value);
+                    setCustomAmount("");
+                  }}
+                  className={`p-4 rounded-lg font-bold text-sm md:text-base transition transform hover:scale-105 flex flex-col items-center gap-1 ${
                     selectedAmount === amount.value
-                      ? "bg-orange-500 text-white shadow-lg"
-                      : "bg-white text-orange-600 border-2 border-orange-500 hover:bg-orange-50"
+                      ? "bg-orange-500 text-white shadow-lg border-2 border-orange-600"
+                      : "bg-white text-orange-600 border-2 border-orange-300 hover:bg-orange-50 hover:border-orange-500"
                   }`}
                 >
-                  {amount.label}
+                  <span>{amount.label}</span>
+                  <span className={`text-xs ${selectedAmount === amount.value ? "text-orange-100" : "text-orange-400"}`}>
+                    {amount.description}
+                  </span>
                 </button>
               ))}
             </div>
+
+            {/* Valor Customizado */}
+            <div className="max-w-md mx-auto mb-8 bg-white p-6 rounded-lg border-2 border-gray-200">
+              <label className="block text-gray-800 font-bold mb-3">Ou digite um valor customizado:</label>
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <span className="absolute left-3 top-3 text-gray-600 font-bold">R$</span>
+                  <input
+                    type="number"
+                    value={customAmount}
+                    onChange={(e) => {
+                      setCustomAmount(e.target.value);
+                      setSelectedAmount(null);
+                    }}
+                    placeholder="0,00"
+                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Resumo da Doação */}
+            {finalAmount && (
+              <div className="max-w-md mx-auto mb-8 bg-green-50 p-6 rounded-lg border-2 border-green-200">
+                <p className="text-gray-700 mb-2">Valor da doação:</p>
+                <p className="text-3xl font-bold text-green-600 mb-4">R$ {finalAmount.toLocaleString('pt-BR')}</p>
+                <p className="text-sm text-gray-600">✓ Doação segura e 100% dedicada à APAE</p>
+              </div>
+            )}
+
+            {/* Botão Doar */}
             <div className="text-center">
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-12 py-6 text-lg font-semibold">
+              <Button 
+                disabled={!finalAmount}
+                className={`px-12 py-6 text-lg font-semibold transition ${
+                  finalAmount
+                    ? "bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
                 <CreditCard className="w-5 h-5 mr-2" />
-                Doar Agora
+                {finalAmount ? `Doar R$ ${finalAmount.toLocaleString('pt-BR')}` : "Selecione um valor"}
               </Button>
             </div>
           </div>
@@ -115,13 +170,28 @@ export default function Donate() {
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               {impactExamples.map((example, index) => (
-                <Card key={index} className="p-8 border-l-4 border-orange-500">
+                <Card key={index} className="p-8 border-l-4 border-orange-500 hover:shadow-lg transition">
                   <div className="text-4xl mb-4">{example.icon}</div>
                   <h3 className="text-2xl font-bold text-gray-800 mb-2">{example.amount}</h3>
                   <p className="text-gray-600 text-lg">{example.impact}</p>
                 </Card>
               ))}
             </div>
+            
+            {/* Impacto Customizado */}
+            {finalAmount && finalAmount > 0 && (
+              <div className="mt-12 bg-orange-50 p-8 rounded-lg border-2 border-orange-200 max-w-2xl mx-auto">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+                  Seu Impacto com R$ {finalAmount.toLocaleString('pt-BR')}
+                </h3>
+                <div className="space-y-3 text-gray-700">
+                  <p>✓ Você está ajudando a transformar vidas</p>
+                  <p>✓ Sua doação contribui para educação especializada</p>
+                  <p>✓ Você faz parte de uma comunidade de doadores</p>
+                  <p>✓ Receberá relatório de impacto da sua doação</p>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -132,7 +202,10 @@ export default function Donate() {
               Formas de Doação
             </h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <Card className="p-8 text-center">
+              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
+                paymentMethod === 'card' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
+              }`}
+              onClick={() => setPaymentMethod('card')}>
                 <CreditCard className="w-12 h-12 text-orange-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Cartão de Crédito</h3>
                 <p className="text-gray-600 mb-6">
@@ -143,7 +216,10 @@ export default function Donate() {
                 </Button>
               </Card>
 
-              <Card className="p-8 text-center">
+              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
+                paymentMethod === 'transfer' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
+              }`}
+              onClick={() => setPaymentMethod('transfer')}>
                 <Banknote className="w-12 h-12 text-orange-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Transferência Bancária</h3>
                 <p className="text-gray-600 mb-6">
@@ -154,7 +230,10 @@ export default function Donate() {
                 </Button>
               </Card>
 
-              <Card className="p-8 text-center">
+              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
+                paymentMethod === 'pix' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
+              }`}
+              onClick={() => setPaymentMethod('pix')}>
                 <Gift className="w-12 h-12 text-orange-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-4">PIX</h3>
                 <p className="text-gray-600 mb-6">
