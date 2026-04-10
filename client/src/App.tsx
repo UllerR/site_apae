@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Events from "./pages/Events";
 import Partnerships from "./pages/Partnerships";
 import Donate from "./pages/Donate";
+import PixDonation from "./pages/PixDonation";
 import Volunteer from "./pages/Volunteer";
 
 function Router() {
@@ -17,9 +18,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/events" component={Events} />
       <Route path="/partnerships" component={Partnerships} />
-      <Route path="/donate" component={Donate} />
-      <Route path="/volunteer" component={Volunteer} />
-      <Route path="/404" component={NotFound} />
+      <Route path={"/donate"} component={Donate} />
+      <Route path={"/pix-donation"} component={PixDonation} />
+      <Route path={"/volunteer"} component={Volunteer} />   <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

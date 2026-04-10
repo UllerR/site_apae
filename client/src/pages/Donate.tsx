@@ -3,12 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, CreditCard, Banknote, Gift } from "lucide-react";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 export default function Donate() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+
+  const handleDonate = () => {
+    const amount = selectedAmount || (customAmount ? parseInt(customAmount) : null);
+    if (amount) {
+      setLocation(`/pix-donation?amount=${amount}`);
+    }
+  };
 
   const donationAmounts = [
     { value: 25, label: "R$ 25", description: "Pequeno gesto" },
@@ -149,6 +158,7 @@ export default function Donate() {
             <div className="text-center">
               <Button 
                 disabled={!finalAmount}
+                onClick={handleDonate}
                 className={`px-12 py-6 text-lg font-semibold transition ${
                   finalAmount
                     ? "bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
@@ -201,21 +211,7 @@ export default function Donate() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
               Formas de Doação
             </h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
-                paymentMethod === 'card' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
-              }`}
-              onClick={() => setPaymentMethod('card')}>
-                <CreditCard className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Cartão de Crédito</h3>
-                <p className="text-gray-600 mb-6">
-                  Doação segura e rápida via cartão de crédito ou débito.
-                </p>
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  Doar com Cartão
-                </Button>
-              </Card>
-
+            <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
               <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
                 paymentMethod === 'transfer' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
               }`}
