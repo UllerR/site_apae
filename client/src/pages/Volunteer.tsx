@@ -71,28 +71,16 @@ export default function Volunteer() {
 
   const volunteerRoles = [
     {
-      title: "Educador",
-      description: "Auxilie nas atividades educacionais e de aprendizagem",
-      icon: "📚",
-      requirements: "Paciência, comunicação clara",
+      title: "Apoio Administrativo",
+      description: "Auxilie nas tarefas administrativas e de organização",
+      icon: "📋",
+      requirements: "Atenção aos detalhes, organização",
     },
     {
-      title: "Terapeuta Assistente",
-      description: "Apoie profissionais em sessões de terapia",
-      icon: "🎯",
-      requirements: "Interesse em saúde, empatia",
-    },
-    {
-      title: "Facilitador de Eventos",
-      description: "Ajude na organização de eventos e atividades",
-      icon: "🎉",
-      requirements: "Organização, trabalho em equipe",
-    },
-    {
-      title: "Mentor de Inclusão",
-      description: "Acompanhe crianças em atividades de inclusão social",
-      icon: "🤝",
-      requirements: "Dedicação, sensibilidade social",
+      title: "Suporte Técnico",
+      description: "Ajude com questões técnicas e de informática",
+      icon: "💻",
+      requirements: "Conhecimento técnico básico, paciência",
     },
   ];
 
