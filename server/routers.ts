@@ -1,8 +1,8 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
-import { createContact, createDonation } from "./db";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { createContact, createDonation, getAllDonations } from "./db";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
 
@@ -21,6 +21,16 @@ export const appRouter = router({
   }),
 
   donations: router({
+    list: protectedProcedure
+      .query(async () => {
+        try {
+          const donations = await getAllDonations();
+          return donations;
+        } catch (error) {
+          console.error("[Donations] Error fetching donations:", error);
+          throw new Error("Falha ao carregar doações");
+        }
+      }),
     create: publicProcedure
       .input(
         z.object({
