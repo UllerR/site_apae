@@ -172,39 +172,6 @@ export default function Donate() {
           </div>
         </section>
 
-        {/* Impacto da Doação */}
-        <section className="py-16 md:py-24 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-              Veja o Impacto da Sua Doação
-            </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {impactExamples.map((example, index) => (
-                <Card key={index} className="p-8 border-l-4 border-orange-500 hover:shadow-lg transition">
-                  <div className="text-4xl mb-4">{example.icon}</div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">{example.amount}</h3>
-                  <p className="text-gray-600 text-lg">{example.impact}</p>
-                </Card>
-              ))}
-            </div>
-            
-            {/* Impacto Customizado */}
-            {finalAmount && finalAmount > 0 && (
-              <div className="mt-12 bg-orange-50 p-8 rounded-lg border-2 border-orange-200 max-w-2xl mx-auto">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-                  Seu Impacto com R$ {finalAmount.toLocaleString('pt-BR')}
-                </h3>
-                <div className="space-y-3 text-gray-700">
-                  <p>✓ Você está ajudando a transformar vidas</p>
-                  <p>✓ Sua doação contribui para educação especializada</p>
-                  <p>✓ Você faz parte de uma comunidade de doadores</p>
-                  <p>✓ Receberá relatório de impacto da sua doação</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
         {/* Formas de Doação */}
         <section className="py-16 md:py-24 px-4 bg-gray-50">
           <div className="container mx-auto">
