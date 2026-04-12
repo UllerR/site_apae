@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import bcrypt from "bcryptjs";
 import { InsertUser, users, events, donations, contacts, eventRegistrations, InsertEvent, InsertDonation, InsertContact, InsertEventRegistration } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -139,4 +140,48 @@ export async function getAllContacts() {
   const db = await getDb();
   if (!db) return [];
   return await db.select().from(contacts).orderBy(contacts.createdAt);
+}
+
+// Email/Password Authentication
+
+export async function createUserWithPassword(
+  email: string,
+  password: string,
+  name: string,
+  role: "user" | "admin" = "user"
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const openId = `email-${email}-${Date.now()}`;
+
+  return await db.insert(users).values({
+    openId,
+    email,
+    passwordHash,
+    name,
+    loginMethod: "email",
+    role,
+  });
+}
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function verifyPassword(plainPassword: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(plainPassword, hash);
+}
+
+export async function updateUserPassword(userId: number, newPassword: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  return await db.update(users).set({ passwordHash }).where(eq(users.id, userId));
 }
