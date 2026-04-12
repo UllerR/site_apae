@@ -5,11 +5,51 @@ import { Heart, Copy, Check, QrCode, Download } from "lucide-react";
 import { useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { QRCodeSVG } from "qrcode.react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 export default function PixDonation() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
   const [copied, setCopied] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createDonation = trpc.donations.create.useMutation({
+    onSuccess: () => {
+      toast.success("Doação registrada com sucesso! Email de confirmação enviado.");
+      setShowConfirmation(true);
+      setDonorName("");
+      setDonorEmail("");
+      setTimeout(() => setShowConfirmation(false), 5000);
+    },
+    onError: (error) => {
+      toast.error("Erro ao registrar doação. Tente novamente.");
+      console.error(error);
+    },
+  });
+
+  const handleConfirmDonation = async () => {
+    if (!donorName || !donorEmail) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await createDonation.mutateAsync({
+        donorName,
+        donorEmail,
+        amount,
+        method: "pix",
+        message: "Doação via PIX",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Extrair valor da URL
   const params = new URLSearchParams(window.location.search);
@@ -56,7 +96,7 @@ export default function PixDonation() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Header/Navigation */}
+      {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -65,242 +105,247 @@ export default function PixDonation() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-800">APAE Itajaí</h1>
-              <p className="text-xs text-gray-600">Associação de Pais e Amigos dos Excepcionais</p>
+              <p className="text-xs text-gray-600">Doação via PIX</p>
             </div>
           </div>
-          <nav className="hidden md:flex gap-8">
-            <a href="/" className="text-gray-700 hover:text-green-600 font-medium transition">Início</a>
-            <a href="/donate" className="text-gray-700 hover:text-green-600 font-medium transition">Doação</a>
-            <a href="/partnerships" className="text-gray-700 hover:text-green-600 font-medium transition">Parcerias</a>
-          </nav>
+          <a href="/donate">
+            <Button className="bg-gray-600 hover:bg-gray-700 text-white">
+              Voltar
+            </Button>
+          </a>
         </div>
       </header>
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full bg-gradient-to-r from-green-600 to-green-700 py-16 md:py-24 px-4">
+        <section className="py-12 md:py-16 px-4 bg-gradient-to-r from-green-600 to-green-700">
           <div className="container mx-auto text-center text-white">
-            <div className="flex justify-center mb-6">
-              <QrCode className="w-16 h-16" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Confirme Sua Doação via PIX</h1>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-              Utilize uma das chaves PIX abaixo para completar sua doação de forma segura e instantânea.
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              Confirme Sua Doação
+            </h1>
+            <p className="text-lg md:text-xl mb-4">
+              Valor: <span className="font-bold text-2xl">R$ {parseInt(amount).toLocaleString('pt-BR')}</span>
+            </p>
+            <p className="text-base md:text-lg opacity-90">
+              Escaneie o QR Code ou use as chaves PIX abaixo para completar sua doação
             </p>
           </div>
         </section>
 
-        {/* Valor da Doação */}
-        {amount !== "0" && (
-          <section className="py-8 px-4 bg-green-50">
-            <div className="container mx-auto text-center">
-              <p className="text-gray-700 mb-2">Valor da doação:</p>
-              <p className="text-4xl font-bold text-green-600">R$ {parseInt(amount).toLocaleString('pt-BR')}</p>
-            </div>
-          </section>
-        )}
-
-        {/* Chaves PIX */}
+        {/* Main Content */}
         <section className="py-16 md:py-24 px-4">
-          <div className="container mx-auto max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-              Chaves PIX Disponíveis
-            </h2>
-
-            <div className="space-y-6">
-              {/* PIX por CNPJ */}
-              <Card className="p-8 border-2 border-green-200">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">PIX por CNPJ</h3>
-                <p className="text-gray-600 mb-6">
-                  Copie o CNPJ da instituição e utilize em seu aplicativo bancário:
-                </p>
-                <div className="bg-gray-50 p-4 rounded-lg mb-4 flex items-center justify-between">
-                  <code className="text-lg font-mono font-bold text-gray-800">{pixData.cnpj}</code>
-                  <button
-                    onClick={handleCopyPix}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5" />
-                        Copiar
-                      </>
-                    )}
-                  </button>
-                </div>
-                <p className="text-sm text-gray-600">
-                  ✓ Doação instantânea e segura
-                </p>
-              </Card>
-
-              {/* QR Code PIX */}
-              <Card className="p-8 border-2 border-blue-200">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">QR Code PIX</h3>
-                <p className="text-gray-600 mb-6">
-                  Escaneie o QR Code com seu celular para fazer a doação de forma rápida e segura:
-                </p>
-                <div className="flex flex-col items-center bg-gray-50 p-6 rounded-lg mb-4">
-                  <div ref={qrRef} className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG 
-                      value={pixQRData} 
-                      size={200} 
-                      level="H" 
-                      includeMargin={true}
-                      fgColor="#1f2937"
-                      bgColor="#ffffff"
-                    />
+          <div className="container mx-auto max-w-4xl">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Formulário de Confirmação */}
+              <div>
+                <Card className="p-8 border-2 border-green-200">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Seus Dados</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nome Completo
+                      </label>
+                      <input
+                        type="text"
+                        value={donorName}
+                        onChange={(e) => setDonorName(e.target.value)}
+                        placeholder="Seu nome"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={donorEmail}
+                        onChange={(e) => setDonorEmail(e.target.value)}
+                        placeholder="seu@email.com"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-bold">Valor da doação:</span> R$ {parseInt(amount).toLocaleString('pt-BR')}
+                      </p>
+                      <p className="text-sm text-gray-700 mt-2">
+                        <span className="font-bold">Método:</span> PIX
+                      </p>
+                    </div>
+                    <Button
+                      onClick={handleConfirmDonation}
+                      disabled={isSubmitting || !donorName || !donorEmail}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg font-semibold"
+                    >
+                      {isSubmitting ? "Processando..." : "Confirmar Doação"}
+                    </Button>
+                    <p className="text-xs text-gray-600 text-center">
+                      Você receberá um email de confirmação após a doação
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600 mt-4 text-center">
-                    Valor: R$ {parseInt(amount).toLocaleString('pt-BR')}
+                </Card>
+              </div>
+
+              {/* QR Code e Chaves PIX */}
+              <div className="space-y-6">
+                {/* QR Code */}
+                <Card className="p-8 border-2 border-blue-200">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <QrCode className="w-6 h-6" />
+                    QR Code PIX
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Escaneie o QR Code com seu celular para fazer a doação de forma rápida e segura:
                   </p>
-                </div>
-                <button
-                  onClick={handleDownloadQR}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-                >
-                  <Download className="w-5 h-5" />
-                  Baixar QR Code
-                </button>
-                <p className="text-sm text-gray-600 mt-4">
-                  ✓ Doação instantânea e segura
-                </p>
-              </Card>
-
-              {/* PIX por Email */}
-              <Card className="p-8 border-2 border-green-200">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">PIX por Email</h3>
-                <p className="text-gray-600 mb-6">
-                  Copie o email da instituição e utilize em seu aplicativo bancário:
-                </p>
-                <div className="bg-gray-50 p-4 rounded-lg mb-4 flex items-center justify-between">
-                  <code className="text-lg font-mono font-bold text-gray-800">{pixData.pixKeyEmail}</code>
-                  <button
-                    onClick={handleCopyEmail}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+                  <div className="flex flex-col items-center bg-gray-50 p-6 rounded-lg mb-4">
+                    <div ref={qrRef} className="bg-white p-4 rounded-lg">
+                      <QRCodeSVG
+                        value={pixQRData}
+                        size={200}
+                        level="H"
+                        includeMargin={true}
+                        fgColor="#1f2937"
+                        bgColor="#ffffff"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-4 text-center">
+                      Valor: R$ {parseInt(amount).toLocaleString('pt-BR')}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDownloadQR}
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
                   >
-                    {copied ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5" />
-                        Copiar
-                      </>
-                    )}
-                  </button>
-                </div>
-                <p className="text-sm text-gray-600">
-                  ✓ Doação instantânea e segura
-                </p>
-              </Card>
+                    <Download className="w-4 h-4" />
+                    Baixar QR Code
+                  </Button>
+                  <p className="text-sm text-gray-600 mt-4">
+                    ✓ Doação instantânea e segura
+                  </p>
+                </Card>
 
-              {/* Dados Bancários */}
-              <Card className="p-8 border-2 border-orange-200">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Transferência Bancária</h3>
-                <p className="text-gray-600 mb-6">
-                  Se preferir, você pode fazer uma transferência bancária:
-                </p>
-                <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
-                  <div>
-                    <p className="text-sm text-gray-600">Banco</p>
-                    <p className="font-bold text-gray-800">{pixData.bankData.bank}</p>
+                {/* Chaves PIX */}
+                <Card className="p-8 border-2 border-orange-200">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Chaves PIX</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">CNPJ</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={pixData.pixKey}
+                          readOnly
+                          className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded text-sm"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={handleCopyPix}
+                          className="bg-orange-500 hover:bg-orange-600"
+                        >
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">Email</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={pixData.pixKeyEmail}
+                          readOnly
+                          className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded text-sm"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={handleCopyEmail}
+                          className="bg-orange-500 hover:bg-orange-600"
+                        >
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Agência</p>
-                    <p className="font-bold text-gray-800">{pixData.bankData.agency}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Conta</p>
-                    <p className="font-bold text-gray-800">{pixData.bankData.account}</p>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              </div>
             </div>
-          </div>
-        </section>
 
-        {/* Instruções */}
-        <section className="py-16 md:py-24 px-4 bg-gray-50">
-          <div className="container mx-auto max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-              Como Fazer a Doação
-            </h2>
+            {/* Instruções */}
+            <div className="mt-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                Como Fazer a Doação
+              </h2>
 
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
-                    1
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
+                      1
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Abra seu Banco</h3>
+                    <p className="text-gray-600">
+                      Abra o aplicativo do seu banco ou acesse o site de sua instituição financeira.
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Abra seu Banco</h3>
-                  <p className="text-gray-600">
-                    Abra o aplicativo do seu banco ou acesse o site de sua instituição financeira.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
-                    2
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
+                      2
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Selecione PIX</h3>
+                    <p className="text-gray-600">
+                      Escolha a opção "PIX" ou "Transferência PIX" no menu de transações.
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Selecione PIX</h3>
-                  <p className="text-gray-600">
-                    Escolha a opção "PIX" ou "Transferência PIX" no menu de transações.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
-                    3
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
+                      3
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Escaneie ou Cole a Chave</h3>
+                    <p className="text-gray-600">
+                      Escaneie o QR Code ou cole uma das chaves PIX acima no campo de destinatário.
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Cole a Chave PIX</h3>
-                  <p className="text-gray-600">
-                    Cole uma das chaves PIX acima (CNPJ ou Email) no campo de destinatário.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
-                    4
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
+                      4
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Digite o Valor</h3>
+                    <p className="text-gray-600">
+                      Digite o valor R$ {parseInt(amount).toLocaleString('pt-BR')} e confirme a transação.
+                    </p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Digite o Valor</h3>
-                  <p className="text-gray-600">
-                    Digite o valor que deseja doar e confirme a transação.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
-                    5
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-600 text-white font-bold">
+                      5
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Pronto!</h3>
-                  <p className="text-gray-600">
-                    Sua doação foi processada instantaneamente. Você receberá um comprovante por email.
-                  </p>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Confirme Aqui</h3>
+                    <p className="text-gray-600">
+                      Volte para esta página e preencha seus dados para confirmar a doação e receber o email de confirmação.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

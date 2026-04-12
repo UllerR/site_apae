@@ -2,7 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { createContact } from "./db";
+import { createContact, createDonation } from "./db";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
 
@@ -18,6 +18,46 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  donations: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          donorName: z.string().min(1),
+          donorEmail: z.string().email(),
+          amount: z.string(),
+          method: z.enum(["pix", "transferencia", "cartao", "outro"]),
+          message: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          await createDonation({
+            donorName: input.donorName,
+            donorEmail: input.donorEmail,
+            amount: input.amount,
+            currency: "BRL",
+            method: input.method,
+            status: "confirmada",
+            message: input.message || null,
+            isRecurring: false,
+          });
+
+          await notifyOwner({
+            title: `Nova Doacao Confirmada: R$ ${input.amount}`,
+            content: `Doador: ${input.donorName}\nEmail: ${input.donorEmail}\nValor: R$ ${input.amount}\nMetodo: ${input.method}`,
+          });
+
+          return {
+            success: true,
+            message: "Doacao registrada com sucesso!",
+          };
+        } catch (error) {
+          console.error("[Donation] Error creating donation:", error);
+          throw new Error("Falha ao registrar doacao");
+        }
+      }),
   }),
 
   contacts: router({
