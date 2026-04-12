@@ -249,12 +249,12 @@ export default function Donate() {
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4">Contato</h3>
-              <p className="text-gray-400 text-sm">Telefone: (47) 3245-1234</p>
-              <p className="text-gray-400 text-sm">Email: contato@apaeitajai.org.br</p>
+              <p className="text-gray-400 text-sm">Telefone: (47) 3348-8813</p>
+              <p className="text-gray-400 text-sm">Email: apaeitj@gmail.com.br</p>
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4">CNPJ</h3>
-              <p className="text-gray-400 text-sm">CNPJ: 12.345.678/0001-90</p>
+              <p className="text-gray-400 text-sm">CNPJ: 84.306.869/0001-59</p>
             </div>
           </div>
           <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
