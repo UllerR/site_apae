@@ -69,20 +69,7 @@ export default function Volunteer() {
     }
   };
 
-  const volunteerRoles = [
-    {
-      title: "Apoio Administrativo",
-      description: "Auxilie nas tarefas administrativas e de organização",
-      icon: "📋",
-      requirements: "Atenção aos detalhes, organização",
-    },
-    {
-      title: "Suporte Técnico",
-      description: "Ajude com questões técnicas e de informática",
-      icon: "💻",
-      requirements: "Conhecimento técnico básico, paciência",
-    },
-  ];
+  const volunteerRoles = [];
 
   const benefits = [
     {
@@ -192,17 +179,8 @@ export default function Volunteer() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
               Oportunidades de Voluntariado
             </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {volunteerRoles.map((role, index) => (
-                <Card key={index} className="p-8">
-                  <div className="text-4xl mb-4">{role.icon}</div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">{role.title}</h3>
-                  <p className="text-gray-600 mb-4">{role.description}</p>
-                  <p className="text-sm text-gray-500">
-                    <span className="font-semibold">Requisitos:</span> {role.requirements}
-                  </p>
-                </Card>
-              ))}
+            <div className="text-center text-gray-600">
+              <p className="text-lg">Em breve, novas oportunidades de voluntário estarão disponíveis.</p>
             </div>
           </div>
         </section>
