@@ -130,11 +130,11 @@ export default function Home() {
                 <p className="text-xl">Anos de História</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">500+</div>
+                <div className="text-5xl md:text-6xl font-bold mb-2">+ 500</div>
                 <p className="text-xl">Alunos Atendidos</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">44+</div>
+                <div className="text-5xl md:text-6xl font-bold mb-2">+ 44</div>
                 <p className="text-xl">Educadores</p>
               </div>
               <div className="text-center">
