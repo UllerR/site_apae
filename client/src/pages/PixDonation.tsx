@@ -1,9 +1,10 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Copy, Check, QrCode } from "lucide-react";
-import { useState } from "react";
+import { Heart, Copy, Check, QrCode, Download } from "lucide-react";
+import { useState, useRef } from "react";
 import { useLocation } from "wouter";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function PixDonation() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
@@ -36,6 +37,21 @@ export default function PixDonation() {
     navigator.clipboard.writeText(pixData.pixKeyEmail);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  // Gerar dados PIX dinâmicos (simplificado)
+  const pixQRData = `00020126580014br.gov.bcb.brcode0136${pixData.pixKeyEmail}5204000053039865802BR5913APAE Itajai6009ITAJAI62410503***63041D99`;
+
+  const handleDownloadQR = () => {
+    const canvas = qrRef.current?.querySelector('canvas') as HTMLCanvasElement;
+    if (canvas) {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `qrcode-doacao-${amount}.png`;
+      link.click();
+    }
   };
 
   return (
@@ -118,6 +134,39 @@ export default function PixDonation() {
                   </button>
                 </div>
                 <p className="text-sm text-gray-600">
+                  ✓ Doação instantânea e segura
+                </p>
+              </Card>
+
+              {/* QR Code PIX */}
+              <Card className="p-8 border-2 border-blue-200">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">QR Code PIX</h3>
+                <p className="text-gray-600 mb-6">
+                  Escaneie o QR Code com seu celular para fazer a doação de forma rápida e segura:
+                </p>
+                <div className="flex flex-col items-center bg-gray-50 p-6 rounded-lg mb-4">
+                  <div ref={qrRef} className="bg-white p-4 rounded-lg">
+                    <QRCodeSVG 
+                      value={pixQRData} 
+                      size={200} 
+                      level="H" 
+                      includeMargin={true}
+                      fgColor="#1f2937"
+                      bgColor="#ffffff"
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600 mt-4 text-center">
+                    Valor: R$ {parseInt(amount).toLocaleString('pt-BR')}
+                  </p>
+                </div>
+                <button
+                  onClick={handleDownloadQR}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                >
+                  <Download className="w-5 h-5" />
+                  Baixar QR Code
+                </button>
+                <p className="text-sm text-gray-600 mt-4">
                   ✓ Doação instantânea e segura
                 </p>
               </Card>
