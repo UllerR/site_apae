@@ -126,7 +126,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">Nosso Impacto</h2>
             <div className="grid md:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">50+</div>
+                <div className="text-5xl md:text-6xl font-bold mb-2">+ de 50</div>
                 <p className="text-xl">Anos de História</p>
               </div>
               <div className="text-center">
