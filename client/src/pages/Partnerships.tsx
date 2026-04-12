@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export default function Partnerships() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -155,7 +156,7 @@ export default function Partnerships() {
                   <li>✓ PIX, transferência bancária</li>
                   <li>✓ Dedutível no imposto de renda</li>
                 </ul>
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                <Button onClick={() => setLocation('/donate')} className="w-full bg-green-600 hover:bg-green-700 text-white">
                   Contribuir
                 </Button>
               </Card>
@@ -174,7 +175,7 @@ export default function Partnerships() {
                   <li>✓ Eventos e oficinas</li>
                   <li>✓ Suporte administrativo</li>
                 </ul>
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                <Button onClick={() => setLocation('/volunteer')} className="w-full bg-orange-500 hover:bg-orange-600 text-white">
                   Voluntariar-se
                 </Button>
               </Card>
@@ -193,7 +194,7 @@ export default function Partnerships() {
                   <li>✓ Programas de RSE</li>
                   <li>✓ Doações em espécie</li>
                 </ul>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={() => setLocation('/#contato')} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   Conversar
                 </Button>
               </Card>
