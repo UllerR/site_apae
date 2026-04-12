@@ -56,8 +56,8 @@ export default function PixDonation() {
   const amount = params.get("amount") || "0";
 
   const pixData = {
-    cnpj: "12.345.678/0001-90",
-    pixKey: "12.345.678/0001-90",
+    cnpj: "84.306.869/0001-59",
+    pixKey: "84.306.869/0001-59",
     pixKeyEmail: "apae@itajai.org.br",
     institution: "APAE Itajaí",
     bankData: {
