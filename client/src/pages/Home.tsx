@@ -318,7 +318,7 @@ export default function Home() {
                 © 2026 APAE de Itajaí. Todos os direitos reservados.
               </p>
               <div className="flex gap-6 mt-4 md:mt-0">
-                <a href="#" className="text-gray-400 hover:text-orange-500 transition">Facebook</a>
+                <a href="https://www.facebook.com/apaeitajaioficial" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition">Facebook</a>
                 <a href="https://www.instagram.com/apaedeitajai?igsh=cGNzOTRkdXZhNWR5" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition">Instagram</a>
                 <a href="#" className="text-gray-400 hover:text-orange-500 transition">YouTube</a>
               </div>
