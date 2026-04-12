@@ -41,8 +41,8 @@ export default function PixDonation() {
 
   const qrRef = useRef<HTMLDivElement>(null);
 
-  // Gerar dados PIX dinâmicos (simplificado)
-  const pixQRData = `00020126580014br.gov.bcb.brcode0136${pixData.pixKeyEmail}5204000053039865802BR5913APAE Itajai6009ITAJAI62410503***63041D99`;
+  // Gerar dados PIX dinâmicos com CNPJ (simplificado)
+  const pixQRData = `00020126580014br.gov.bcb.brcode0136${pixData.pixKey}5204000053039865802BR5913APAE Itajai6009ITAJAI62410503***63041D99`;
 
   const handleDownloadQR = () => {
     const canvas = qrRef.current?.querySelector('canvas') as HTMLCanvasElement;
