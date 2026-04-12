@@ -178,32 +178,19 @@ export default function Donate() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
               Formas de Doação
             </h2>
-            <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
-                paymentMethod === 'transfer' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
-              }`}
-              onClick={() => setPaymentMethod('transfer')}>
-                <Banknote className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Transferência Bancária</h3>
-                <p className="text-gray-600 mb-6">
-                  Banco: Itaú | Agência: 1234 | Conta: 567890-X
-                </p>
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  Ver Dados Bancários
-                </Button>
-              </Card>
-
-              <Card className={`p-8 text-center cursor-pointer transition transform hover:scale-105 ${
-                paymentMethod === 'pix' ? 'border-2 border-orange-500 bg-orange-50' : 'border border-gray-200'
-              }`}
-              onClick={() => setPaymentMethod('pix')}>
+            <div className="flex justify-center">
+              <Card className="p-8 text-center max-w-md w-full">
                 <Gift className="w-12 h-12 text-orange-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-4">PIX</h3>
                 <p className="text-gray-600 mb-6">
-                  Doação instantânea via PIX. Chave: apae@itajai.org.br
+                  Doação instantânea via PIX
                 </p>
+                <div className="bg-gray-100 p-4 rounded-lg mb-6">
+                  <p className="text-sm text-gray-600 mb-2">CNPJ da APAE:</p>
+                  <p className="text-lg font-bold text-gray-800">84.306.869/0001-59</p>
+                </div>
                 <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  Copiar Chave PIX
+                  Gerar QR Code PIX
                 </Button>
               </Card>
             </div>
