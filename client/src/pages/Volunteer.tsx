@@ -173,18 +173,6 @@ export default function Volunteer() {
           </section>
         )}
 
-        {/* Oportunidades de Voluntariado */}
-        <section className="py-16 md:py-24 px-4 bg-gray-50">
-          <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-              Oportunidades de Voluntariado
-            </h2>
-            <div className="text-center text-gray-600">
-              <p className="text-lg">Em breve, novas oportunidades de voluntário estarão disponíveis.</p>
-            </div>
-          </div>
-        </section>
-
         {/* Benefícios */}
         <section className="py-16 md:py-24 px-4">
           <div className="container mx-auto">
