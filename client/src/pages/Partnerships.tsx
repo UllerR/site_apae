@@ -194,7 +194,7 @@ export default function Partnerships() {
                   <li>✓ Programas de RSE</li>
                   <li>✓ Doações em espécie</li>
                 </ul>
-                <Button onClick={() => setLocation('/#contato')} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                <Button onClick={() => setLocation('/volunteer')} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   Conversar
                 </Button>
               </Card>
