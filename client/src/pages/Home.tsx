@@ -126,20 +126,20 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">Nosso Impacto</h2>
             <div className="grid md:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">+ de 50</div>
-                <p className="text-xl">Anos de História</p>
+                <div className="text-4xl md:text-5xl font-bold mb-2">+ de 50</div>
+                <p className="text-lg">Anos de História</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">+ 500</div>
-                <p className="text-xl">Alunos Atendidos</p>
+                <div className="text-4xl md:text-5xl font-bold mb-2">+ de 500</div>
+                <p className="text-lg">Alunos Atendidos</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">+ 44</div>
-                <p className="text-xl">Educadores</p>
+                <div className="text-4xl md:text-5xl font-bold mb-2">+ de 44</div>
+                <p className="text-lg">Educadores</p>
               </div>
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-bold mb-2">7</div>
-                <p className="text-xl">Áreas de Atendimento</p>
+                <div className="text-4xl md:text-5xl font-bold mb-2">7</div>
+                <p className="text-lg">Áreas de Atendimento</p>
               </div>
             </div>
           </div>
